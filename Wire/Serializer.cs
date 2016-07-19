@@ -70,7 +70,9 @@ namespace Wire
             //add TypeSerializer with null support
         }
 
+#if !NET35
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         private ValueSerializer GetCustomSerialzer(Type type)
         {
             ValueSerializer serializer;
@@ -92,7 +94,9 @@ namespace Wire
             return serializer;
         }
 
+#if !NET35
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         private ValueSerializer GetCustomDeserialzer(Type type)
         {
             ValueSerializer serializer;

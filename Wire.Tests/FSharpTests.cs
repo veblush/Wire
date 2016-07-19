@@ -1,4 +1,5 @@
-﻿using Akka.Actor;
+﻿#if !NET35
+using Akka.Actor;
 using Microsoft.FSharp.Collections;
 using Microsoft.FSharp.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -84,3 +85,4 @@ namespace Wire.Tests
         }
     }
 }
+#endif

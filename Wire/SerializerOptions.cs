@@ -13,7 +13,9 @@ namespace Wire
         {
             new ToSurrogateSerializerFactory(),
             new FromSurrogateSerializerFactory(),
+#if !NET35
             new FSharpListSerializerFactory(), 
+#endif
             //order is important, try dictionaries before enumerables as dicts are also enumerable
             new ImmutableCollectionsSerializerFactory(),
             new DefaultDictionarySerializerFactory(),

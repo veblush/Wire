@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Immutable;
+// using System.Collections.Immutable;
+
 namespace Wire.Tests
 {
     [TestClass]
     public class CollectionTests : TestBase
     {
-
+#if !NET35
         [TestMethod]
         public void CanSerializeImmutableDictionary()
         {
@@ -23,6 +24,7 @@ namespace Wire.Tests
                 var map2 = serializer.Deserialize(stream);  // exception
             }
         }
+#endif
 
         [TestMethod]
         public void CanSerializeSet()
@@ -152,6 +154,7 @@ namespace Wire.Tests
             CollectionAssert.AreEqual(expected, actual);
         }
 
+#if !NET35
         [TestMethod]
         public void Issue18()
         {
@@ -173,7 +176,7 @@ namespace Wire.Tests
 
             Assert.IsTrue(msg.SequenceEqual(deserialized));
         }
-
+#endif
 
         [TestMethod]
         public void CanSerializeArrayOfTuples()

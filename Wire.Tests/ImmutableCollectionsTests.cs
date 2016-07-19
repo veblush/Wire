@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#if !NET35
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -179,3 +180,4 @@ namespace Wire.Tests
         }
     }
 }
+#endif

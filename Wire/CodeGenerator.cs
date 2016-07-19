@@ -155,6 +155,7 @@ namespace Wire
             if (fieldWriters == null)
                 throw new ArgumentNullException(nameof(fieldWriters));
 
+#if !NET35
             var streamParam = Parameter(typeof (Stream));
             var objectParam = Parameter(typeof (object));
             var sessionParam = Parameter(typeof (SerializerSession));
@@ -170,6 +171,9 @@ namespace Wire
                     sessionParam)
                     .Compile();
             return writeallFields;
+#else
+            return (stream, obj, session) => fieldWriters.ForEach(w => w(stream, obj, session));
+#endif
         }
 
         private static FieldInfo[] GetFieldInfosForType(Type type)
@@ -184,7 +188,9 @@ namespace Wire
                 var tfields =
                     current
                         .GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
+#if !NET35
                         .Where(f => !f.IsDefined(typeof (NonSerializedAttribute)))
+#endif
                         .Where(f => !f.IsStatic)
                         .Where(f => f.FieldType != typeof (IntPtr))
                         .Where(f => f.FieldType != typeof (UIntPtr))
@@ -218,6 +224,7 @@ namespace Wire
             }
             else
             {
+#if !NET35
                 var targetExp = Parameter(typeof (object), "target");
                 var valueExp = Parameter(typeof (object), "value");
 
@@ -229,6 +236,10 @@ namespace Wire
                 var fieldExp = Field(castTartgetExp, field);
                 var assignExp = Assign(fieldExp, castValueExp);
                 setter = Lambda<Action<object, object>>(assignExp, targetExp, valueExp).Compile();
+#else
+                setter = (obj, value) => field.SetValue(obj, value);
+#endif
+
             }
 
 
@@ -307,6 +318,7 @@ namespace Wire
             if (field == null)
                 throw new ArgumentNullException(nameof(field));
 
+#if !NET35
             var param = Parameter(typeof (object));
             // ReSharper disable once PossibleNullReferenceException
             Expression castParam = field.DeclaringType.IsValueType
@@ -315,7 +327,9 @@ namespace Wire
             Expression readField = Field(castParam, field);
             Expression castRes = Convert(readField, typeof (object));
             var getFieldValue = Lambda<Func<object, object>>(castRes, param).Compile();
-
+#else
+            Func<object, object> getFieldValue = obj => field.GetValue(obj);
+#endif
             if (Debugger.IsAttached)
             {
                 return target =>
@@ -333,6 +347,7 @@ namespace Wire
             return getFieldValue;
         }
 
+#if !NET35
         public static Func<object, object> CompileToDelegate(MethodInfo method, Type argType)
         {
             var arg = Expression.Parameter(typeof (object));
@@ -343,5 +358,6 @@ namespace Wire
             var compiled = lambda.Compile();
             return compiled;
         }
+#endif
     }
 }

@@ -15,7 +15,11 @@ namespace Wire.SerializerFactories
 
         private static bool IsInterface(Type type)
         {
+#if !NET35
             return type.IsConstructedGenericType && type.GetGenericTypeDefinition() == typeof (Dictionary<,>);
+#else
+            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>);
+#endif
         }
 
         public override bool CanDeserialize(Serializer serializer, Type type)
